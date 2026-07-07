@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Chiar vrei să petreci timp pe LinkedIn acum?" },
+  "promptSubtitle": { "message": "Ai instalat această extensie ca să rămâi concentrat/ă și să nu te lași distras/ă de feed." },
+  "durationQuestion": { "message": "Cât timp vrei să rămâi?" },
+  "inputPlaceholder": { "message": "Ce voiai de fapt să faci aici? (opțional)" },
+  "startButton": { "message": "Să începem" },
+  "reminderTitle": { "message": "Încă ești concentrat/ă?" },
+  "elapsedLabel": { "message": "Ești deja de {min} minute în feedul LinkedIn." },
+  "focusReminder": { "message": "Nu uita: voiai să rămâi concentrat/ă, nu să te distragi." },
+  "intentLabel": { "message": "Planul tău era: „{intent}”" },
+  "question": { "message": "Ce vrei să faci acum?" },
+  "continueDefaultLabel": { "message": "Mai rămân puțin" },
+  "continueWithIntentLabel": { "message": "Continuă: „{intent}”" },
+  "walkLabel": { "message": "Fă o plimbare de 15 minute" },
+  "coffeeLabel": { "message": "Du-te după o cafea" }
+}

@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Feed Reminder",
+  "version": "1.0.0",
+  "description": "Fragt beim Öffnen des LinkedIn-Feeds, was du vorhast, und erinnert dich nach 5 Minuten daran.",
+  "default_locale": "en",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["tabs"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "linkedin-feed-reminder@schellhasconsulting.de"
+    }
+  }
+}

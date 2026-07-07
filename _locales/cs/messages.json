@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Chceš teď opravdu trávit čas na LinkedIn?" },
+  "promptSubtitle": { "message": "Nainstaloval/a jsi si toto rozšíření, abys zůstal/a soustředěný/á a nenechal/a se rozptýlit feedem." },
+  "durationQuestion": { "message": "Jak dlouho chceš zůstat?" },
+  "inputPlaceholder": { "message": "Co jsi tu vlastně chtěl/a dělat? (volitelné)" },
+  "startButton": { "message": "Jdeme na to" },
+  "reminderTitle": { "message": "Pořád soustředěný/á?" },
+  "elapsedLabel": { "message": "Jsi už {min} minut ve feedu LinkedIn." },
+  "focusReminder": { "message": "Nezapomeň: chtěl/a jsi zůstat soustředěný/á, ne se rozptylovat." },
+  "intentLabel": { "message": "Tvůj plán byl: „{intent}“" },
+  "question": { "message": "Co chceš dělat teď?" },
+  "continueDefaultLabel": { "message": "Zůstanu ještě chvíli" },
+  "continueWithIntentLabel": { "message": "Pokračovat: „{intent}“" },
+  "walkLabel": { "message": "Jít se projít na 15 minut" },
+  "coffeeLabel": { "message": "Jít si pro kávu" }
+}

@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Do you really want to spend time on LinkedIn right now?" },
+  "promptSubtitle": { "message": "You installed this extension to stay focused and avoid getting sucked into the feed." },
+  "durationQuestion": { "message": "How long do you want to stay?" },
+  "inputPlaceholder": { "message": "What are you actually here to do? (optional)" },
+  "startButton": { "message": "Let's go" },
+  "reminderTitle": { "message": "Still on track?" },
+  "elapsedLabel": { "message": "You've spent {min} minutes in the LinkedIn feed." },
+  "focusReminder": { "message": "Remember: you wanted to stay focused, not get distracted." },
+  "intentLabel": { "message": "Your plan was: \"{intent}\"" },
+  "question": { "message": "What do you want to do now?" },
+  "continueDefaultLabel": { "message": "I'll stay a little longer" },
+  "continueWithIntentLabel": { "message": "Continue: \"{intent}\"" },
+  "walkLabel": { "message": "Take a 15-minute walk" },
+  "coffeeLabel": { "message": "Go get a coffee" }
+}

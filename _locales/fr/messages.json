@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Veux-tu vraiment passer du temps sur LinkedIn maintenant ?" },
+  "promptSubtitle": { "message": "Tu as installé cette extension pour rester concentré·e et ne pas te laisser distraire par le fil d'actualité." },
+  "durationQuestion": { "message": "Combien de temps veux-tu rester ?" },
+  "inputPlaceholder": { "message": "Que veux-tu faire ici, au juste ? (optionnel)" },
+  "startButton": { "message": "C'est parti" },
+  "reminderTitle": { "message": "Toujours concentré·e ?" },
+  "elapsedLabel": { "message": "Tu passes déjà {min} minutes sur le fil LinkedIn." },
+  "focusReminder": { "message": "Rappelle-toi : tu voulais rester concentré·e, pas te laisser distraire." },
+  "intentLabel": { "message": "Ton objectif était : « {intent} »" },
+  "question": { "message": "Que veux-tu faire maintenant ?" },
+  "continueDefaultLabel": { "message": "Je reste encore un peu" },
+  "continueWithIntentLabel": { "message": "Continuer : « {intent} »" },
+  "walkLabel": { "message": "Aller marcher 15 minutes" },
+  "coffeeLabel": { "message": "Aller chercher un café" }
+}

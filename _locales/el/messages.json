@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Θέλεις πραγματικά να περάσεις χρόνο στο LinkedIn τώρα;" },
+  "promptSubtitle": { "message": "Εγκατέστησες αυτή την επέκταση για να παραμένεις συγκεντρωμένος/η και να μην αποσπάσαι από τη ροή." },
+  "durationQuestion": { "message": "Πόση ώρα θέλεις να μείνεις;" },
+  "inputPlaceholder": { "message": "Τι ήθελες πραγματικά να κάνεις εδώ; (προαιρετικό)" },
+  "startButton": { "message": "Ας ξεκινήσουμε" },
+  "reminderTitle": { "message": "Είσαι ακόμα συγκεντρωμένος/η;" },
+  "elapsedLabel": { "message": "Βρίσκεσαι ήδη {min} λεπτά στη ροή του LinkedIn." },
+  "focusReminder": { "message": "Θυμήσου: ήθελες να μείνεις συγκεντρωμένος/η, όχι να αποσπαστείς." },
+  "intentLabel": { "message": "Το σχέδιό σου ήταν: «{intent}»" },
+  "question": { "message": "Τι θέλεις να κάνεις τώρα;" },
+  "continueDefaultLabel": { "message": "Θα μείνω λίγο ακόμα" },
+  "continueWithIntentLabel": { "message": "Συνέχισε: «{intent}»" },
+  "walkLabel": { "message": "Πήγαινε για 15λεπτο περίπατο" },
+  "coffeeLabel": { "message": "Πήγαινε για καφέ" }
+}

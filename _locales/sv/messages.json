@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Vill du verkligen spendera tid på LinkedIn just nu?" },
+  "promptSubtitle": { "message": "Du installerade det här tillägget för att hålla fokus och inte låta dig distraheras av flödet." },
+  "durationQuestion": { "message": "Hur länge vill du stanna?" },
+  "inputPlaceholder": { "message": "Vad ville du egentligen göra här? (valfritt)" },
+  "startButton": { "message": "Sätt igång" },
+  "reminderTitle": { "message": "Fortfarande fokuserad?" },
+  "elapsedLabel": { "message": "Du har redan varit {min} minuter i LinkedIn-flödet." },
+  "focusReminder": { "message": "Kom ihåg: du ville hålla fokus, inte bli distraherad." },
+  "intentLabel": { "message": "Din plan var: \"{intent}\"" },
+  "question": { "message": "Vad vill du göra nu?" },
+  "continueDefaultLabel": { "message": "Jag stannar lite till" },
+  "continueWithIntentLabel": { "message": "Fortsätt: \"{intent}\"" },
+  "walkLabel": { "message": "Ta en 15-minuters promenad" },
+  "coffeeLabel": { "message": "Hämta en kaffe" }
+}

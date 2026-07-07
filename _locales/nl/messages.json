@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Wil je nu echt tijd doorbrengen op LinkedIn?" },
+  "promptSubtitle": { "message": "Je hebt deze extensie geïnstalleerd om gefocust te blijven en je niet te laten afleiden door de feed." },
+  "durationQuestion": { "message": "Hoe lang wil je blijven?" },
+  "inputPlaceholder": { "message": "Wat wilde je hier eigenlijk doen? (optioneel)" },
+  "startButton": { "message": "Aan de slag" },
+  "reminderTitle": { "message": "Nog steeds gefocust?" },
+  "elapsedLabel": { "message": "Je zit nu al {min} minuten in de LinkedIn-feed." },
+  "focusReminder": { "message": "Denk eraan: je wilde gefocust blijven, niet afgeleid worden." },
+  "intentLabel": { "message": "Je plan was: \"{intent}\"" },
+  "question": { "message": "Wat wil je nu doen?" },
+  "continueDefaultLabel": { "message": "Ik blijf nog even" },
+  "continueWithIntentLabel": { "message": "Doorgaan: \"{intent}\"" },
+  "walkLabel": { "message": "15 minuten gaan wandelen" },
+  "coffeeLabel": { "message": "Koffie gaan halen" }
+}

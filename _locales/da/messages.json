@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Vil du virkelig bruge tid på LinkedIn lige nu?" },
+  "promptSubtitle": { "message": "Du installerede denne udvidelse for at holde fokus og undgå at blive distraheret af feedet." },
+  "durationQuestion": { "message": "Hvor længe vil du blive?" },
+  "inputPlaceholder": { "message": "Hvad ville du egentlig lave her? (valgfrit)" },
+  "startButton": { "message": "Kom i gang" },
+  "reminderTitle": { "message": "Stadig fokuseret?" },
+  "elapsedLabel": { "message": "Du har allerede brugt {min} minutter i LinkedIn-feedet." },
+  "focusReminder": { "message": "Husk: du ville holde fokus, ikke blive distraheret." },
+  "intentLabel": { "message": "Din plan var: \"{intent}\"" },
+  "question": { "message": "Hvad vil du lave nu?" },
+  "continueDefaultLabel": { "message": "Jeg bliver lidt længere" },
+  "continueWithIntentLabel": { "message": "Fortsæt: \"{intent}\"" },
+  "walkLabel": { "message": "Gå en 15-minutters tur" },
+  "coffeeLabel": { "message": "Hent en kop kaffe" }
+}

@@ -1,0 +1,16 @@
+{
+  "promptTitle": { "message": "Haluatko todella viettää aikaa LinkedInissä juuri nyt?" },
+  "promptSubtitle": { "message": "Asensit tämän laajennuksen pysyäksesi keskittyneenä etkä antaaksesi feedin häiritä sinua." },
+  "durationQuestion": { "message": "Kuinka kauan haluat jäädä?" },
+  "inputPlaceholder": { "message": "Mitä oikeastaan halusit tehdä täällä? (valinnainen)" },
+  "startButton": { "message": "Aloitetaan" },
+  "reminderTitle": { "message": "Oletko yhä keskittynyt?" },
+  "elapsedLabel": { "message": "Olet jo viettänyt {min} minuuttia LinkedIn-feedissä." },
+  "focusReminder": { "message": "Muista: halusit pysyä keskittyneenä, et häiriintyä." },
+  "intentLabel": { "message": "Suunnitelmasi oli: ”{intent}”" },
+  "question": { "message": "Mitä haluat tehdä nyt?" },
+  "continueDefaultLabel": { "message": "Jään vielä hetkeksi" },
+  "continueWithIntentLabel": { "message": "Jatka: ”{intent}”" },
+  "walkLabel": { "message": "Kävele 15 minuuttia" },
+  "coffeeLabel": { "message": "Hae kahvia" }
+}
