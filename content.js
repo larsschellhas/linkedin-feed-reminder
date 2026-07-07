@@ -58,10 +58,17 @@
     return overlay;
   }
 
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
+  // Kleiner DOM-Helfer: baut Elemente ohne innerHTML, damit übersetzte und
+  // nutzergenerierte Texte ausschließlich über textContent (automatisch
+  // escaped) in die Seite gelangen.
+  function createElement(tag, { className, text, attrs } = {}) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    if (attrs) {
+      Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+    }
+    return node;
   }
 
   // Buttons, die auf LinkedIn verbleiben lassen, sind erst nach ein paar
@@ -91,25 +98,34 @@
 
   function showIntentPrompt() {
     const overlay = createOverlay("lfr-intent");
-    const durationButtons = DURATION_OPTIONS_MINUTES.map(
-      (minutes) =>
-        `<button type="button" class="lfr-duration-btn${
-          minutes === DEFAULT_DURATION_MINUTES ? " lfr-duration-btn-primary" : ""
-        }" data-minutes="${minutes}">${minutes} min</button>`
-    ).join("");
+    const box = createElement("div", { className: "lfr-box" });
 
-    overlay.innerHTML = `
-      <div class="lfr-box">
-        <div class="lfr-icon" aria-hidden="true">🎯</div>
-        <p class="lfr-title">${escapeHtml(t("promptTitle"))}</p>
-        <p class="lfr-subtitle">${escapeHtml(t("promptSubtitle"))}</p>
-        <input class="lfr-input" type="text" placeholder="${escapeHtml(t("inputPlaceholder"))}" maxlength="200" />
-        <p class="lfr-duration-question">${escapeHtml(t("durationQuestion"))}</p>
-        <div class="lfr-duration-group">${durationButtons}</div>
-      </div>
-    `;
+    box.appendChild(createElement("div", { className: "lfr-icon", text: "🎯", attrs: { "aria-hidden": "true" } }));
+    box.appendChild(createElement("p", { className: "lfr-title", text: t("promptTitle") }));
+    box.appendChild(createElement("p", { className: "lfr-subtitle", text: t("promptSubtitle") }));
 
-    const input = overlay.querySelector(".lfr-input");
+    const input = createElement("input", { className: "lfr-input" });
+    input.type = "text";
+    input.placeholder = t("inputPlaceholder");
+    input.maxLength = 200;
+    box.appendChild(input);
+
+    box.appendChild(createElement("p", { className: "lfr-duration-question", text: t("durationQuestion") }));
+
+    const durationGroup = createElement("div", { className: "lfr-duration-group" });
+    DURATION_OPTIONS_MINUTES.forEach((minutes) => {
+      const isPrimary = minutes === DEFAULT_DURATION_MINUTES;
+      const btn = createElement("button", {
+        className: `lfr-duration-btn${isPrimary ? " lfr-duration-btn-primary" : ""}`,
+        text: `${minutes} min`,
+      });
+      btn.type = "button";
+      btn.dataset.minutes = String(minutes);
+      durationGroup.appendChild(btn);
+    });
+    box.appendChild(durationGroup);
+
+    overlay.appendChild(box);
     input.focus();
 
     function startSession(minutes) {
@@ -122,7 +138,7 @@
       startTimer();
     }
 
-    overlay.querySelectorAll(".lfr-duration-btn").forEach((btn) => {
+    durationGroup.querySelectorAll(".lfr-duration-btn").forEach((btn) => {
       applyCooldown(btn, COOLDOWN_SECONDS);
       btn.addEventListener("click", () => {
         if (btn.disabled) return;
@@ -132,7 +148,7 @@
 
     input.addEventListener("keydown", (e) => {
       if (e.key !== "Enter") return;
-      const primaryBtn = overlay.querySelector(".lfr-duration-btn-primary");
+      const primaryBtn = durationGroup.querySelector(".lfr-duration-btn-primary");
       if (primaryBtn && !primaryBtn.disabled) startSession(Number(primaryBtn.dataset.minutes));
     });
   }
@@ -152,38 +168,51 @@
     const progressPct = Math.min((elapsedMinutes / chosenDurationMinutes) * 100, 100);
 
     const overlay = createOverlay("lfr-reminder");
+    const box = createElement("div", { className: "lfr-box" });
 
-    const intentLine = intent
-      ? `<p class="lfr-intent-line">${escapeHtml(t("intentLabel").replace("{intent}", intent))}</p>`
-      : "";
+    const ringWrap = createElement("div", { className: "lfr-ring-wrap" });
+    const ring = createElement("div", { className: "lfr-ring" });
+    ring.style.setProperty("--pct", String(progressPct));
+    ringWrap.appendChild(ring);
+
+    const ringHole = createElement("div", { className: "lfr-ring-hole" });
+    ringHole.appendChild(createElement("span", { className: "lfr-ring-value", text: String(elapsedMinutes) }));
+    ringHole.appendChild(createElement("span", { className: "lfr-ring-unit", text: "min" }));
+    ringWrap.appendChild(ringHole);
+    box.appendChild(ringWrap);
+
+    box.appendChild(createElement("p", { className: "lfr-title", text: t("reminderTitle") }));
+    box.appendChild(
+      createElement("p", { className: "lfr-message", text: t("elapsedLabel").replace("{min}", elapsedMinutes) })
+    );
+    box.appendChild(createElement("p", { className: "lfr-subtitle", text: t("focusReminder") }));
+
+    if (intent) {
+      box.appendChild(
+        createElement("p", {
+          className: "lfr-intent-line",
+          text: t("intentLabel").replace("{intent}", intent),
+        })
+      );
+    }
+
+    box.appendChild(createElement("p", { className: "lfr-question", text: t("question") }));
 
     const continueLabel = intent
       ? t("continueWithIntentLabel").replace("{intent}", intent)
       : t("continueDefaultLabel");
 
-    overlay.innerHTML = `
-      <div class="lfr-box">
-        <div class="lfr-ring-wrap">
-          <div class="lfr-ring" style="--pct: ${progressPct}"></div>
-          <div class="lfr-ring-hole">
-            <span class="lfr-ring-value">${elapsedMinutes}</span>
-            <span class="lfr-ring-unit">min</span>
-          </div>
-        </div>
-        <p class="lfr-title">${escapeHtml(t("reminderTitle"))}</p>
-        <p class="lfr-message">${escapeHtml(t("elapsedLabel").replace("{min}", elapsedMinutes))}</p>
-        <p class="lfr-subtitle">${escapeHtml(t("focusReminder"))}</p>
-        ${intentLine}
-        <p class="lfr-question">${escapeHtml(t("question"))}</p>
-        <div class="lfr-actions lfr-actions-stacked">
-          <button class="lfr-btn lfr-btn-primary" data-action="continue">${escapeHtml(continueLabel)}</button>
-          <button class="lfr-btn" data-action="walk">${escapeHtml(t("walkLabel"))}</button>
-          <button class="lfr-btn" data-action="coffee">${escapeHtml(t("coffeeLabel"))}</button>
-        </div>
-      </div>
-    `;
+    const actions = createElement("div", { className: "lfr-actions lfr-actions-stacked" });
+    const continueButton = createElement("button", { className: "lfr-btn lfr-btn-primary", text: continueLabel });
+    const walkButton = createElement("button", { className: "lfr-btn", text: t("walkLabel") });
+    const coffeeButton = createElement("button", { className: "lfr-btn", text: t("coffeeLabel") });
+    actions.appendChild(continueButton);
+    actions.appendChild(walkButton);
+    actions.appendChild(coffeeButton);
+    box.appendChild(actions);
 
-    const continueButton = overlay.querySelector('[data-action="continue"]');
+    overlay.appendChild(box);
+
     continueButton.addEventListener("click", () => {
       overlay.remove();
       unlockPage();
@@ -191,7 +220,7 @@
     });
     applyCooldown(continueButton, COOLDOWN_SECONDS);
 
-    overlay.querySelectorAll('[data-action="walk"], [data-action="coffee"]').forEach((btn) => {
+    [walkButton, coffeeButton].forEach((btn) => {
       btn.addEventListener("click", () => {
         browser.runtime.sendMessage({ type: "close-tab" });
       });

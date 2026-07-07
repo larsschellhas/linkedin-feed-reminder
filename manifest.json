@@ -20,7 +20,10 @@
   "permissions": ["tabs"],
   "browser_specific_settings": {
     "gecko": {
-      "id": "linkedin-feed-reminder@schellhasconsulting.de"
+      "id": "linkedin-feed-reminder@schellhasconsulting.de",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   }
 }
