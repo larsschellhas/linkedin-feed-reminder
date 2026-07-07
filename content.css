@@ -7,6 +7,14 @@ html.lfr-locked body {
   display: none !important;
 }
 
+/* LinkedIn blendet auf der mobilen Web-Ansicht einen fixierten Banner ein,
+   der zum Wechsel in die native App drängt ("non-blocking-upsell"). Das
+   data-storage-key-Attribut ist ein funktionaler Bezeichner (kein gehashter
+   Utility-Klassenname) und daher als Selektor stabil. */
+[data-storage-key="non-blocking-upsell"] {
+  display: none !important;
+}
+
 .lfr-overlay {
   position: fixed;
   inset: 0;
