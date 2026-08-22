@@ -56,24 +56,61 @@ steps) before making changes.
 
 ## Publishing
 
-- **Automated (listed releases)**: bump `"version"` in
-  [manifest.json](manifest.json) and [package.json](package.json), commit,
-  then push a matching tag:
+### Automated (listed releases)
+
+1. Bump `"version"` in both [manifest.json](manifest.json) and
+   [package.json](package.json) to the same new value, commit, and get it
+   merged to `master` (PR review, per [AGENTS.md](AGENTS.md#branching--commits)).
+2. Tag `master` and push the tag:
+
+   ```
+   git tag vX.Y.Z && git push origin vX.Y.Z
+   ```
+
+The [publish workflow](.github/workflows/publish.yml) then lints, builds,
+and submits the new version to AMO's listed channel via `web-ext sign`,
+and attaches the signed `.xpi` to a GitHub release at
+`github.com/<repo>/releases/tag/vX.Y.Z`.
+
+**One-time setup**: generate an API key at
+[addons.mozilla.org/developers/addon/api/key](https://addons.mozilla.org/en-US/developers/addon/api/key/)
+and store it as two repo secrets (Settings → Secrets and variables →
+Actions): `AMO_JWT_ISSUER` and `AMO_JWT_SECRET`. Paste them without any
+extra whitespace/newline — a stray character here fails signing with
+`Error decoding signature`, not an obviously credentials-related message.
+
+**What can go wrong / how to react**:
+
+- **Tag/manifest version mismatch** → workflow fails fast on purpose,
+  before touching AMO. Fix the version and re-tag.
+- **`Error decoding signature` at the sign step** → bad `AMO_JWT_ISSUER` /
+  `AMO_JWT_SECRET` secrets (swapped, stale, or has extra whitespace). Not
+  a code problem; re-check the secrets.
+- **Run times out after ~15 minutes at "Waiting for approval..."** →
+  `web-ext sign` polls AMO and gives up after its default timeout. This
+  does **not** mean the submission failed — if AMO flagged the version for
+  manual review (rather than auto-signing it), review can take far longer
+  than 15 minutes. Check the
+  [AMO developer dashboard](https://addons.mozilla.org/en-US/developers/addons)
+  for the actual status before assuming anything is broken.
+- **Re-running a failed attempt for the same version**: if AMO never
+  accepted the version (e.g. the run failed before or during signing),
+  it's safe to fix the issue and retrigger by deleting and re-pushing the
+  same tag:
 
   ```
-  git tag v1.2.0 && git push origin v1.2.0
+  git tag -d vX.Y.Z && git push origin :refs/tags/vX.Y.Z
+  git tag vX.Y.Z && git push origin vX.Y.Z
   ```
 
-  The [publish workflow](.github/workflows/publish.yml) lints, builds, and
-  submits the new version to AMO's listed channel via `web-ext sign`, then
-  attaches the signed `.xpi` to a GitHub release. Requires the
-  `AMO_JWT_ISSUER` / `AMO_JWT_SECRET` repo secrets (generate at
-  [addons.mozilla.org/developers/addon/api/key](https://addons.mozilla.org/en-US/developers/addon/api/key/)).
-  The workflow fails if the tag and manifest version don't match.
-- **Manual self-distribution**: package the extension (`web-ext build` or a
-  zip of this directory) and have it signed via
-  [addons.mozilla.org](https://addons.mozilla.org/developers/) as an unlisted
-  add-on, then install the signed `.xpi` file.
+  Once a version has actually been accepted/signed by AMO, its number is
+  burned — you can't resubmit it, only bump to the next one.
+
+### Manual self-distribution
+
+Package the extension (`web-ext build` or a zip of this directory) and
+have it signed via [addons.mozilla.org](https://addons.mozilla.org/developers/)
+as an unlisted add-on, then install the signed `.xpi` file.
 
 ## License
 
