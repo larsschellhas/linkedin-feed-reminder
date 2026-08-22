@@ -5,15 +5,29 @@ sucked into endless feed scrolling.
 
 ## What it does
 
-- When you open the LinkedIn feed, it asks what you actually want to do there
-  and how long you plan to stay (1, 5, or 10 minutes).
+- When you open the LinkedIn feed, it asks how long you plan to stay (1, 5,
+  or 10 minutes).
 - After that time (capped at 5 minutes) a reminder pops up showing how long
-  you've actually been in the feed, with a progress ring relative to your
-  chosen duration.
-- The reminder offers a choice: continue what you stated you wanted to do, or
-  close the tab and do something else instead (e.g. take a walk, get a
-  coffee). Buttons that keep you on LinkedIn have a short cooldown before
-  they become clickable, so you can't just reflexively click through.
+  you've actually been in the feed, with a progress ring relative to the
+  time you've granted yourself.
+- The reminder's main action closes the tab, paired with a randomly picked
+  suggestion (take a walk, grab a coffee, drink some water, stretch,
+  breathe). Below that: quick links to less distracting LinkedIn pages
+  (Notifications, Messages, your profile), and — de-emphasized at the
+  bottom — the option to extend by 1/5/10 more minutes. Buttons that keep
+  you on LinkedIn have a cooldown before they become clickable (longer for
+  longer extensions), so you can't just reflexively click through.
+- The session keeps running in the background while you browse other
+  LinkedIn pages: a small, non-interactive status bubble shows the
+  remaining time and fades out in its final seconds — no alert, no link
+  back to the feed. Returning to the feed brings the reminder straight back
+  if time has run out in the meantime; if time ran out while you were away,
+  the session ends and you're asked fresh next time you open the feed.
+- The running session is shared across all LinkedIn tabs, so opening a
+  second feed tab adopts the same countdown instead of resetting it.
+- Opening a single post from a notification (a `?highlightedUpdateUrn=...`
+  link) gets a brief grace period before it's treated as regular feed
+  browsing.
 - Available in 15 European languages (auto-detected from your browser
   language, with English as fallback).
 - Hides the red notification bubble LinkedIn shows on the "Home" nav item,
@@ -27,6 +41,18 @@ sucked into endless feed scrolling.
 
 Temporary add-ons are removed when Firefox restarts. For permanent use, see
 below.
+
+## Development
+
+No build step is required — the extension ships exactly the files in this
+repo. `npm install` pulls in `web-ext` for optional tooling:
+
+- `npm run lint` — lint the extension via `web-ext lint`.
+- `npm run start` — run it in a temporary Firefox profile via `web-ext run`.
+- `npm run build` — package it into `web-ext-artifacts/`.
+
+See [AGENTS.md](AGENTS.md) for conventions (i18n, coding style, verification
+steps) before making changes.
 
 ## Publishing
 

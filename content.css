@@ -34,8 +34,8 @@ html.lfr-locked body {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  padding: clamp(24px, 4vw, 40px);
-  width: clamp(320px, 92vw, 480px);
+  padding: clamp(20px, 4vw, 32px);
+  width: clamp(320px, 92vw, 440px);
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
@@ -43,66 +43,30 @@ html.lfr-locked body {
 }
 
 .lfr-icon {
-  font-size: 40px;
+  font-size: 36px;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .lfr-title {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   font-size: clamp(18px, 2.4vw, 24px);
   font-weight: 700;
   color: #1a1a1a;
 }
 
 .lfr-subtitle {
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   font-size: 14px;
   color: #555;
   line-height: 1.4;
 }
 
-.lfr-message {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #222;
-}
-
-.lfr-intent-line {
-  margin: 0 0 16px;
-  font-size: 14px;
-  font-style: italic;
-  color: #444;
-}
-
-.lfr-question {
-  margin: 16px 0 16px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.lfr-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 14px;
-  font-size: 15px;
-  border: 1px solid #cfcfcf;
-  border-radius: 8px;
-  margin: 4px 0 20px;
-  text-align: left;
-}
-
 .lfr-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
-}
-
-.lfr-actions-stacked {
-  flex-direction: column;
 }
 
 .lfr-btn {
@@ -110,7 +74,7 @@ html.lfr-locked body {
   background: #f5f5f5;
   color: #1a1a1a;
   border-radius: 8px;
-  padding: 12px 18px;
+  padding: 11px 18px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -148,7 +112,7 @@ html.lfr-locked body {
   display: flex;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .lfr-duration-btn {
@@ -179,11 +143,48 @@ html.lfr-locked body {
   color: #ffffff;
 }
 
+/* Verlängern-Sektion im Erinnerungs-Overlay: bewusst zurückhaltender als
+   die Walk/Kaffee-Buttons darüber, damit "weitermachen" nicht der optisch
+   dominante Call-to-Action ist. */
+.lfr-continue-instead {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e2e2;
+}
+
+.lfr-continue-instead-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #777;
+}
+
+.lfr-duration-group-secondary {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.lfr-duration-btn-secondary {
+  flex: 1;
+  border: 1px solid #e2e2e2;
+  background: #fafafa;
+  color: #555;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lfr-duration-btn-secondary:hover {
+  background: #efefef;
+}
+
 .lfr-ring-wrap {
   position: relative;
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 16px;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 12px;
 }
 
 .lfr-ring {
@@ -216,4 +217,200 @@ html.lfr-locked body {
   color: #777;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.lfr-safe-links {
+  margin: 14px 0 0;
+}
+
+.lfr-safe-links-intro {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: #777;
+}
+
+.lfr-safe-links-list {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.lfr-safe-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #e2e2e2;
+  border-radius: 999px;
+  background: #f5f5f5;
+  color: #0a66c2;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.lfr-safe-link:hover {
+  background: #ebebeb;
+}
+
+.lfr-safe-link-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Reiner Status-Hinweis (nicht klickbar/fokussierbar – siehe content.js),
+   der sichtbar bleibt, während man sich abseits vom Feed auf LinkedIn
+   bewegt, damit der Timer der laufenden Session weiterhin wahrnehmbar ist.
+   In den letzten Sekunden vor der Erinnerung blendet sie aus, statt zu
+   alarmieren (die Konfrontation erfolgt erst wieder im Feed). */
+.lfr-bubble {
+  position: fixed;
+  /* unten links statt rechts, da rechts von LinkedIns Nachrichten-Bereich
+     (Icon + Popup-Fenster) überlagert wird */
+  left: 20px;
+  bottom: 20px;
+  z-index: 2147483646;
+  background: #1a1a1a;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* LinkedIns mobile Web-Ansicht hat eine fixierte untere Navigationsleiste;
+   ohne Anpassung würde die Bubble darunter/dahinter verschwinden. 768px
+   deckt sich mit LinkedIns eigenem Mobile-Breakpoint. Die 64px sind eine
+   Annäherung an die Höhe dieser Leiste (plus Sicherheitsabstand) – falls
+   LinkedIn sie ändert, muss dieser Wert ggf. nachgezogen werden. */
+@media (max-width: 768px) {
+  .lfr-bubble {
+    left: 12px;
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
+
+.lfr-bubble-warning {
+  background: #b3261e;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lfr-bubble {
+    transition: opacity 1s linear;
+  }
+
+  .lfr-bubble-warning {
+    animation: lfr-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes lfr-pulse {
+  0%,
+  100% {
+    box-shadow: 0 6px 20px rgba(179, 38, 30, 0.35);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(179, 38, 30, 0.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lfr-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.lfr-overlay button:focus-visible,
+.lfr-overlay a:focus-visible {
+  outline: 3px solid #ffb100;
+  outline-offset: 2px;
+}
+
+/* LinkedIn respektiert prefers-color-scheme für den eigenen Dark Mode; wir
+   ziehen nach, damit unsere Overlays nicht als greller Fremdkörper wirken. */
+@media (prefers-color-scheme: dark) {
+  .lfr-box {
+    background: #1b1f23;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .lfr-title,
+  .lfr-ring-value {
+    color: #f2f2f2;
+  }
+
+  .lfr-subtitle,
+  .lfr-duration-question,
+  .lfr-safe-links-intro {
+    color: #b3b8bf;
+  }
+
+  .lfr-btn,
+  .lfr-duration-btn {
+    background: #2a2f36;
+    border-color: #3a3f47;
+    color: #f2f2f2;
+  }
+
+  .lfr-btn:hover,
+  .lfr-duration-btn:hover {
+    background: #343a42;
+  }
+
+  .lfr-btn-primary,
+  .lfr-duration-btn-primary {
+    background: #4a9eff;
+    border-color: #4a9eff;
+    color: #0b0d10;
+  }
+
+  .lfr-btn-primary:hover,
+  .lfr-duration-btn-primary:hover {
+    background: #6fb2ff;
+    border-color: #6fb2ff;
+  }
+
+  .lfr-ring {
+    background: conic-gradient(#4a9eff calc(var(--pct) * 1%), #3a3f47 0);
+  }
+
+  .lfr-ring-hole {
+    background: #1b1f23;
+  }
+
+  .lfr-safe-link {
+    background: #2a2f36;
+    border-color: #3a3f47;
+    color: #6fb2ff;
+  }
+
+  .lfr-safe-link:hover {
+    background: #343a42;
+  }
+
+  .lfr-continue-instead {
+    border-top-color: #3a3f47;
+  }
+
+  .lfr-continue-instead-label {
+    color: #b3b8bf;
+  }
+
+  .lfr-duration-btn-secondary {
+    background: #20242a;
+    border-color: #3a3f47;
+    color: #b3b8bf;
+  }
+
+  .lfr-duration-btn-secondary:hover {
+    background: #2a2f36;
+  }
 }
