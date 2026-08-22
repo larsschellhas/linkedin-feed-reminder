@@ -76,6 +76,33 @@ Bump `"version"` in [manifest.json](manifest.json) (and matching
 pushing a `vX.Y.Z` tag that matches the manifest version — see
 [README.md#publishing](README.md#publishing).
 
+## Releasing (agents: read before tagging)
+
+The [publish workflow](.github/workflows/publish.yml) submits directly to
+AMO's listed channel — pushing a `vX.Y.Z` tag is a real, outward-facing
+release, not a dry run. Treat it accordingly:
+
+- **Confirm with the human before pushing a release tag**, and again before
+  deleting/re-pushing one — don't chain it automatically onto a merge.
+- The tag must match `manifest.json`'s `"version"` exactly (the workflow
+  verifies this and fails otherwise) and must not already exist on AMO —
+  check the current published version if unsure rather than assuming.
+- Deleting and re-pushing the *same* tag is only safe to retrigger a run
+  that failed **before** AMO accepted the version (bad secrets, workflow
+  bug, etc.). Once AMO has actually signed a version, that number is
+  burned; bump to the next one instead.
+- A run stuck at "Waiting for approval..." past ~15 minutes is not
+  necessarily broken — AMO may have queued it for manual review, which
+  this repo's usual patch/minor updates rarely trigger but can't rule out.
+  Check the [AMO developer dashboard](https://addons.mozilla.org/en-US/developers/addons)
+  before concluding the workflow failed.
+- The workflow has no `package-lock.json` to work with (none is committed
+  — see "What this is" above), so it uses `npm install`, not `npm ci`. Keep
+  it that way unless a lockfile gets deliberately introduced.
+- Full troubleshooting notes (credential errors, timeout behavior, retrigger
+  steps) live in [README.md#publishing](README.md#publishing) — read that
+  before improvising a fix.
+
 ## Verifying changes
 
 There is no automated test suite. Before submitting a change:
