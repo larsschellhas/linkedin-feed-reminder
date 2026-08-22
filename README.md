@@ -56,13 +56,24 @@ steps) before making changes.
 
 ## Publishing
 
-- **Self-distribution**: package the extension (`web-ext build` or a zip of
-  this directory) and have it signed via
+- **Automated (listed releases)**: bump `"version"` in
+  [manifest.json](manifest.json) and [package.json](package.json), commit,
+  then push a matching tag:
+
+  ```
+  git tag v1.2.0 && git push origin v1.2.0
+  ```
+
+  The [publish workflow](.github/workflows/publish.yml) lints, builds, and
+  submits the new version to AMO's listed channel via `web-ext sign`, then
+  attaches the signed `.xpi` to a GitHub release. Requires the
+  `AMO_JWT_ISSUER` / `AMO_JWT_SECRET` repo secrets (generate at
+  [addons.mozilla.org/developers/addon/api/key](https://addons.mozilla.org/en-US/developers/addon/api/key/)).
+  The workflow fails if the tag and manifest version don't match.
+- **Manual self-distribution**: package the extension (`web-ext build` or a
+  zip of this directory) and have it signed via
   [addons.mozilla.org](https://addons.mozilla.org/developers/) as an unlisted
   add-on, then install the signed `.xpi` file.
-- **Public listing on AMO**: submit the same package for review as a listed
-  add-on so it's discoverable and installable directly from
-  addons.mozilla.org.
 
 ## License
 

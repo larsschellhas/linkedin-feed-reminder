@@ -70,8 +70,11 @@ purely in-memory, per-tab-only state for anything the user perceives as
 
 ## Versioning
 
-Bump `"version"` in [manifest.json](manifest.json) for any user-facing
-change (new behavior, fixed bug, new permission).
+Bump `"version"` in [manifest.json](manifest.json) (and matching
+`"version"` in [package.json](package.json)) for any user-facing change
+(new behavior, fixed bug, new permission). Publishing to AMO is triggered by
+pushing a `vX.Y.Z` tag that matches the manifest version — see
+[README.md#publishing](README.md#publishing).
 
 ## Verifying changes
 
