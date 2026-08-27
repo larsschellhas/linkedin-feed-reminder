@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Kysyy, mitä aiot tehdä avatessasi LinkedIn-syötteen, ja muistuttaa sinua siitä muutaman minuutin kuluttua." },
-  "promptTitle": { "message": "Haluatko todella viettää aikaa LinkedInissä juuri nyt?" },
+  "promptTitle": { "message": "Kuinka paljon aikaa haluat uhrata LinkedIn-syötteelle juuri nyt?" },
   "promptSubtitle": { "message": "Asensit tämän laajennuksen pysyäksesi keskittyneenä etkä antaaksesi feedin häiritä sinua." },
-  "durationQuestion": { "message": "Kuinka kauan haluat jäädä?" },
+  "declineLabel": { "message": "Ei yhtään – mene mieluummin suoraan:" },
+  "durationQuestion": { "message": "Entä kuinka kauan?" },
   "reminderTitle": { "message": "Oletko yhä keskittynyt?" },
   "continueDefaultLabel": { "message": "Jatka:" },
   "suggestionWalk": { "message": "Sulje LinkedIn ja lähde kävelylle" },

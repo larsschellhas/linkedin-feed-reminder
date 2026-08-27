@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Při otevření LinkedIn feedu se zeptá, co máš v plánu, a po pár minutách ti to připomene." },
-  "promptTitle": { "message": "Chceš teď opravdu trávit čas na LinkedIn?" },
+  "promptTitle": { "message": "Kolik času chceš teď obětovat LinkedIn feedu?" },
   "promptSubtitle": { "message": "Nainstaloval/a jsi si toto rozšíření, abys zůstal/a soustředěný/á a nenechal/a se rozptýlit feedem." },
-  "durationQuestion": { "message": "Jak dlouho chceš zůstat?" },
+  "declineLabel": { "message": "Žádný – radši rovnou na:" },
+  "durationQuestion": { "message": "Tak jak dlouho?" },
   "reminderTitle": { "message": "Pořád soustředěný/á?" },
   "continueDefaultLabel": { "message": "Prodloužit:" },
   "suggestionWalk": { "message": "Zavřít LinkedIn a jít se projít" },

@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Te întreabă ce vrei să faci atunci când deschizi fluxul LinkedIn și îți amintește după câteva minute." },
-  "promptTitle": { "message": "Chiar vrei să petreci timp pe LinkedIn acum?" },
+  "promptTitle": { "message": "Cât timp vrei să sacrifici acum feedului LinkedIn?" },
   "promptSubtitle": { "message": "Ai instalat această extensie ca să rămâi concentrat/ă și să nu te lași distras/ă de feed." },
-  "durationQuestion": { "message": "Cât timp vrei să rămâi?" },
+  "declineLabel": { "message": "Deloc – mergi mai bine direct la:" },
+  "durationQuestion": { "message": "Cât timp atunci?" },
   "reminderTitle": { "message": "Încă ești concentrat/ă?" },
   "continueDefaultLabel": { "message": "Prelungește:" },
   "suggestionWalk": { "message": "Închide LinkedIn și mergi la o plimbare" },
