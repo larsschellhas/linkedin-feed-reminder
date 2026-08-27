@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Megkérdezi, mit tervezel csinálni, amikor megnyitod a LinkedIn hírfolyamot, és néhány perc múlva emlékeztet rá." },
-  "promptTitle": { "message": "Tényleg most akarsz időt tölteni a LinkedInen?" },
+  "promptTitle": { "message": "Mennyi időt akarsz most feláldozni a LinkedIn hírfolyamnak?" },
   "promptSubtitle": { "message": "Azért telepítetted ezt a kiegészítőt, hogy koncentrált maradj, és ne hagyd, hogy a hírfolyam elvonja a figyelmed." },
-  "durationQuestion": { "message": "Mennyi ideig szeretnél maradni?" },
+  "declineLabel": { "message": "Semennyit – inkább egyenesen ide:" },
+  "durationQuestion": { "message": "Akkor mennyi ideig?" },
   "reminderTitle": { "message": "Még mindig koncentrálsz?" },
   "continueDefaultLabel": { "message": "Hosszabbítás:" },
   "suggestionWalk": { "message": "Zárd be a LinkedInt, és menj el sétálni" },

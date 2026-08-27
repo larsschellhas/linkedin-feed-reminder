@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Fragt beim Öffnen des LinkedIn-Feeds, was du vorhast, und erinnert dich nach ein paar Minuten daran." },
-  "promptTitle": { "message": "Willst du gerade wirklich Zeit auf LinkedIn verbringen?" },
+  "promptTitle": { "message": "Wie viel Zeit willst du dem LinkedIn Feed gerade opfern?" },
   "promptSubtitle": { "message": "Du hast dieses Plugin installiert, um fokussiert zu bleiben und dich nicht vom Feed ablenken zu lassen." },
-  "durationQuestion": { "message": "Wie lange willst du bleiben?" },
+  "declineLabel": { "message": "Keine – lieber direkt zu:" },
+  "durationQuestion": { "message": "Wie lange dann?" },
   "reminderTitle": { "message": "Bist du noch bei der Sache?" },
   "continueDefaultLabel": { "message": "Verlängern:" },
   "suggestionWalk": { "message": "LinkedIn schließen und eine Runde spazieren gehen" },

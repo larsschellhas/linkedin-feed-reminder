@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Vraagt wat je van plan bent te doen wanneer je de LinkedIn-feed opent, en herinnert je er na een paar minuten aan." },
-  "promptTitle": { "message": "Wil je nu echt tijd doorbrengen op LinkedIn?" },
+  "promptTitle": { "message": "Hoeveel tijd wil je nu opofferen aan de LinkedIn-feed?" },
   "promptSubtitle": { "message": "Je hebt deze extensie geïnstalleerd om gefocust te blijven en je niet te laten afleiden door de feed." },
-  "durationQuestion": { "message": "Hoe lang wil je blijven?" },
+  "declineLabel": { "message": "Geen – ga liever direct naar:" },
+  "durationQuestion": { "message": "Hoe lang dan?" },
   "reminderTitle": { "message": "Nog steeds gefocust?" },
   "continueDefaultLabel": { "message": "Verlengen:" },
   "suggestionWalk": { "message": "Sluit LinkedIn en ga een stukje wandelen" },

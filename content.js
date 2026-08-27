@@ -2,7 +2,6 @@
   const REMINDER_CAP_MS = 5 * 60 * 1000; // harte Obergrenze: spätestens nach 5 Minuten
   const NAV_POLL_INTERVAL_MS = 1000;
   const DURATION_OPTIONS_MINUTES = [1, 5, 10];
-  const DEFAULT_DURATION_MINUTES = 1;
   // Je länger die gewählte Dauer, desto mehr Bedenkzeit, bevor der Button
   // klickbar wird – gilt einheitlich für die Erstauswahl und das Verlängern.
   const DURATION_COOLDOWN_SECONDS = { 1: 5, 5: 10, 10: 30 };
@@ -44,6 +43,10 @@
   let overlayKind = null; // "intent" | "reminder" | null – welches Overlay gerade offen ist
   let reminderTimerId = null;
   let bubbleEl = null;
+  // sessionStartTime der Session, für die DIESER Tab schon einmal onFeed
+  // beobachtet hat – siehe render()/Erklärung dort. Bleibt über Verlängern
+  // hinweg gültig, da sessionStartTime dabei erhalten bleibt.
+  let sawFeedForSessionStart = null;
   let releaseFocusTrap = null;
   let deepLinkGrace = null; // { search, until } – Schonfrist-Ende für den aktuellen Notification-Deep-Link
   let suppressRenderUntil = 0; // epoch ms – siehe appendSafeLinks()/render()
@@ -174,9 +177,11 @@
   // Fügt die "geh stattdessen hierhin"-Links an ein Overlay an. Kein
   // Cooldown, da diese Links LinkedIn's Feed bewusst verlassen statt dort zu
   // bleiben – die laufende Session bleibt dabei erhalten (siehe render()).
-  function appendSafeLinks(box) {
-    const wrap = createElement("div", { className: "lfr-safe-links" });
-    wrap.appendChild(createElement("p", { className: "lfr-safe-links-intro", text: t("safeLinksIntro") }));
+  // Im Intent-Prompt sind diese Links die primäre Antwort auf "Keine" (siehe
+  // showIntentPrompt) und werden entsprechend prominenter dargestellt.
+  function appendSafeLinks(box, { headingKey = "safeLinksIntro", primary = false } = {}) {
+    const wrap = createElement("div", { className: `lfr-safe-links${primary ? " lfr-safe-links-primary" : ""}` });
+    wrap.appendChild(createElement("p", { className: "lfr-safe-links-intro", text: t(headingKey) }));
 
     const list = createElement("div", { className: "lfr-safe-links-list" });
     SAFE_LINKS.forEach((link) => {
@@ -333,27 +338,31 @@
     box.appendChild(createElement("p", { className: "lfr-title", text: t("promptTitle"), attrs: { id: "lfr-title" } }));
     box.appendChild(createElement("p", { className: "lfr-subtitle", text: t("promptSubtitle") }));
 
-    box.appendChild(createElement("p", { className: "lfr-duration-question", text: t("durationQuestion") }));
+    // "Keine" ist die primäre, erwartete Antwort: die sicheren Seiten stehen
+    // deshalb hier oben als vollwertige Aktionen, nicht als dezenter
+    // Nebenausgang. Die eigentliche Zeitauswahl fürs Bleiben rutscht als
+    // unscheinbarere sekundäre Funktion darunter.
+    appendSafeLinks(box, { headingKey: "declineLabel", primary: true });
 
-    const durationGroup = createElement("div", { className: "lfr-duration-group" });
+    const durationWrap = createElement("div", { className: "lfr-secondary-section" });
+    durationWrap.appendChild(
+      createElement("p", { className: "lfr-secondary-section-label", text: t("durationQuestion") })
+    );
+
+    const durationGroup = createElement("div", { className: "lfr-duration-group-secondary" });
     DURATION_OPTIONS_MINUTES.forEach((minutes) => {
-      const isPrimary = minutes === DEFAULT_DURATION_MINUTES;
-      const btn = createElement("button", {
-        className: `lfr-duration-btn${isPrimary ? " lfr-duration-btn-primary" : ""}`,
-        text: `${minutes} min`,
-      });
+      const btn = createElement("button", { className: "lfr-duration-btn-secondary", text: `${minutes} min` });
       btn.type = "button";
       btn.dataset.minutes = String(minutes);
       durationGroup.appendChild(btn);
     });
-    box.appendChild(durationGroup);
-
-    appendSafeLinks(box);
+    durationWrap.appendChild(durationGroup);
+    box.appendChild(durationWrap);
 
     overlay.appendChild(box);
-    // Die Dauer-Buttons starten im Cooldown (disabled) und sind daher nicht
-    // fokussierbar; die Box selbst bekommt den initialen Fokus, damit
-    // Screenreader den Dialog sofort ankündigen.
+    // Die Box bekommt den initialen Fokus, damit Screenreader den Dialog
+    // sofort ankündigen (die sicheren Links und, nach Ablauf ihres
+    // Cooldowns, die Dauer-Buttons sind die fokussierbaren Elemente darin).
     box.setAttribute("tabindex", "-1");
     box.focus();
     releaseFocusTrap = trapFocus(box);
@@ -380,7 +389,7 @@
       render();
     }
 
-    durationGroup.querySelectorAll(".lfr-duration-btn").forEach((btn) => {
+    durationGroup.querySelectorAll(".lfr-duration-btn-secondary").forEach((btn) => {
       applyCooldown(btn, DURATION_COOLDOWN_SECONDS[Number(btn.dataset.minutes)]);
       btn.addEventListener("click", () => {
         if (btn.disabled) return;
@@ -449,9 +458,9 @@
     // Verlängern: dezent abgesetzt, mit denselben drei Dauer-Optionen (und
     // gestaffelten Cooldowns) wie beim ursprünglichen Intent-Prompt, statt
     // stillschweigend um dieselbe Zeitspanne zu verlängern.
-    const continueWrap = createElement("div", { className: "lfr-continue-instead" });
+    const continueWrap = createElement("div", { className: "lfr-secondary-section" });
     continueWrap.appendChild(
-      createElement("p", { className: "lfr-continue-instead-label", text: t("continueDefaultLabel") })
+      createElement("p", { className: "lfr-secondary-section-label", text: t("continueDefaultLabel") })
     );
 
     const continueGroup = createElement("div", { className: "lfr-duration-group-secondary" });
@@ -532,6 +541,17 @@
       return;
     }
 
+    if (onFeed) {
+      // Markiert, dass DIESER Tab die aktuelle Session tatsächlich im Feed
+      // erlebt hat. Nur ein Tab, der das selbst beobachtet hat, darf die
+      // Session unten beenden, wenn er den Feed wieder verlässt (siehe
+      // Kommentar dort) – sonst könnte ein zweiter, parallel offener
+      // LinkedIn-Tab (z. B. Nachrichten/Benachrichtigungen), der die
+      // Session nur passiv über den gemeinsamen Storage kennt, sie einem
+      // gerade aktiven Feed-Tab mitten im Erinnerungs-Overlay wegreißen.
+      sawFeedForSessionStart = session.sessionStartTime;
+    }
+
     const due = Date.now() >= session.nextReminderAt;
 
     if (due) {
@@ -540,14 +560,22 @@
         hideBubble();
         return;
       }
-      // Die Zeit ist abgelaufen, während man nicht im Feed war. Statt bei
-      // einem späteren Feed-Besuch einfach mit der alten (dann evtl. längst
-      // veralteten) Erinnerung weiterzumachen, beenden wir die Session
-      // hier – ein Rückkehr zum Feed fragt dann wieder frisch, ob man
-      // wirklich dort Zeit verbringen will.
+
       hideBubble();
-      clearSession();
-      scheduleLocalTimer();
+      // Die Zeit ist abgelaufen, während dieser Tab nicht im Feed war.
+      // Beenden (statt bei einem späteren Feed-Besuch einfach mit der
+      // alten, dann evtl. längst veralteten Erinnerung weiterzumachen) tun
+      // wir das aber nur, wenn DIESER Tab selbst der Feed-Tab für die
+      // laufende Session war und inzwischen weggenavigiert ist. Ein Tab,
+      // der nie im Feed für diese Session war, kennt die Session nur über
+      // den gemeinsamen Storage und würde sie sonst genau in dem Moment
+      // beenden, in dem ein anderer, tatsächlich aktiver Feed-Tab das
+      // Erinnerungs-Overlay zeigt (der ursprüngliche Bug: Erinnerung blitzt
+      // kurz auf und wird sofort durch den Intent-Prompt ersetzt).
+      if (sawFeedForSessionStart === session.sessionStartTime) {
+        clearSession();
+        scheduleLocalTimer();
+      }
       return;
     }
 

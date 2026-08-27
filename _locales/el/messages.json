@@ -1,9 +1,10 @@
 {
   "extName": { "message": "LinkedIn Feed Reminder" },
   "extDescription": { "message": "Σε ρωτά τι σκοπεύεις να κάνεις όταν ανοίγεις τη ροή του LinkedIn και σου το υπενθυμίζει μετά από λίγα λεπτά." },
-  "promptTitle": { "message": "Θέλεις πραγματικά να περάσεις χρόνο στο LinkedIn τώρα;" },
+  "promptTitle": { "message": "Πόσο χρόνο θέλεις να θυσιάσεις στη ροή του LinkedIn αυτή τη στιγμή;" },
   "promptSubtitle": { "message": "Εγκατέστησες αυτή την επέκταση για να παραμένεις συγκεντρωμένος/η και να μην αποσπάσαι από τη ροή." },
-  "durationQuestion": { "message": "Πόση ώρα θέλεις να μείνεις;" },
+  "declineLabel": { "message": "Καμία – πήγαινε καλύτερα κατευθείαν σε:" },
+  "durationQuestion": { "message": "Πόση ώρα λοιπόν;" },
   "reminderTitle": { "message": "Είσαι ακόμα συγκεντρωμένος/η;" },
   "continueDefaultLabel": { "message": "Παράταση:" },
   "suggestionWalk": { "message": "Κλείσε το LinkedIn και πήγαινε μια βόλτα" },
