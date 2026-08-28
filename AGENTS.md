@@ -42,10 +42,19 @@ files in this repo, unmodified, straight to Firefox.
   `textContent`, so it's auto-escaped) or plain `textContent` assignment.
   This is a deliberate XSS guard — don't reintroduce `innerHTML` with
   dynamic content.
-- Selectors into LinkedIn's own DOM (see `hideStartNotificationBubble`)
-  should target stable anchors (SVG icon IDs, `data-*` attributes, ARIA
-  attributes) instead of LinkedIn's hashed/generated utility classes, which
-  change on every LinkedIn deploy.
+- Selectors into LinkedIn's own DOM (see the notification-badge rules in
+  content.css and `cleanBaitBadgeAriaLabels` in content.js) should target
+  stable anchors (Artdeco design-system classes, SVG icon IDs, `data-*`
+  attributes, ARIA attributes) instead of LinkedIn's hashed/generated
+  utility classes, which change on every LinkedIn deploy — and can differ
+  entirely between desktop and mobile layouts, so verify a selector against
+  both before relying on it.
+- Prefer a pure CSS rule over JS-toggled classes for hiding LinkedIn's own
+  elements: LinkedIn's Ember nav re-creates nodes like the notification
+  badge on every SPA rerender, which strips any class a poll loop had set
+  and lets it flash back briefly until the next tick. A structural CSS
+  selector re-matches every new node automatically, with no polling delay
+  and no flash.
 
 ## Shared state / cross-tab behavior
 

@@ -587,25 +587,50 @@
     showOrUpdateBubble(onFeed);
   }
 
-  // LinkedIn zeigt am "Start"-Menüpunkt regelmäßig einen roten
-  // Benachrichtigungs-Punkt, der zum Draufklicken (und damit zurück in den
-  // Feed) verleiten soll, auch ohne echte neue Inhalte. Wir blenden ihn aus.
-  // Statt der gehashten Utility-Klassen (die sich bei jedem LinkedIn-Deploy
-  // ändern können) nutzen wir die SVG-Icon-ID "home-medium" als Ankerpunkt,
-  // die stabiler ist, und verstecken den direkt danebenliegenden Span.
-  function hideStartNotificationBubble() {
-    document.querySelectorAll("nav svg#home-medium").forEach((icon) => {
-      const bubble = icon.nextElementSibling;
-      if (bubble && bubble.tagName === "SPAN") {
-        bubble.classList.add("lfr-hidden-bubble");
-      }
+  // LinkedIn zeigt an manchen Nav-Menüpunkten (allen voran "Start") einen
+  // roten Benachrichtigungs-Punkt ganz ohne Zahl, der rein zum Draufklicken
+  // (und damit zurück in den Feed) verleiten soll, auch ohne echte neue
+  // Inhalte. Badges mit echter Zahl (Nachrichten, Mitteilungen) sind dagegen
+  // sinnvoll und bleiben stehen. Das eigentliche Ausblenden übernimmt eine
+  // reine CSS-Regel in content.css (siehe dort) statt JS-Polling: LinkedIns
+  // Ember-Nav ersetzt den Badge-Knoten bei jedem SPA-Rerender neu, wodurch
+  // eine per JS gesetzte Klasse sofort wieder verloren ginge und bis zum
+  // nächsten Poll-Tick (bzw. länger, falls der Tab im Hintergrund gedrosselt
+  // wird) kurz aufblitzen würde. Ein struktureller CSS-Selektor matcht dagegen
+  // jeden neuen Knoten automatisch, ganz ohne Nachziehen.
+  //
+  // Hier bleibt nur noch die a11y-Korrektur: LinkedIn hängt an den
+  // Mobile-Link fälschlich "X neue Mitteilung(en)" als aria-label an, obwohl
+  // dort optisch nur der bedeutungslose Bait-Punkt sitzt. Das ist rein
+  // kosmetisch für Screenreader-Nutzer und nicht zeitkritisch, daher reicht
+  // dafür weiterhin das Polling.
+  function cleanBaitBadgeAriaLabels() {
+    const affectedLinks = [];
 
-      const button = icon.closest("button[aria-label]");
-      if (button) {
-        const cleanedLabel = button.getAttribute("aria-label").replace(/,.*$/, "").trim();
-        if (cleanedLabel && cleanedLabel !== button.getAttribute("aria-label")) {
-          button.setAttribute("aria-label", cleanedLabel);
-        }
+    // Desktop: <div class="artdeco-notification-badge"><span class="notification-badge">
+    //   <span class="notification-badge__no-count"> (leer) ODER
+    //   <span class="notification-badge__count">1</span> (echte Zahl)
+    document.querySelectorAll("nav .artdeco-notification-badge").forEach((badge) => {
+      if (badge.querySelector(".notification-badge__no-count")) {
+        affectedLinks.push(badge.closest("a"));
+      }
+    });
+
+    // Mobile: kein eigener "no-count"-Marker, sondern ein leerer <span>
+    // direkt nach dem SVG-Icon (bei echten Zählern steht dort die Zahl als
+    // Textinhalt).
+    document.querySelectorAll("nav a svg + span").forEach((span) => {
+      if (span.children.length === 0 && span.textContent.trim() === "") {
+        affectedLinks.push(span.closest("a"));
+      }
+    });
+
+    affectedLinks.forEach((link) => {
+      const label = link && link.getAttribute("aria-label");
+      if (!label) return;
+      const cleanedLabel = label.replace(/,[^,]*$/, "").trim();
+      if (cleanedLabel && cleanedLabel !== label) {
+        link.setAttribute("aria-label", cleanedLabel);
       }
     });
   }
@@ -617,13 +642,13 @@
   // aufzurufen, statt Pfadwechsel separat zu verfolgen.
   setInterval(() => {
     render();
-    hideStartNotificationBubble();
+    cleanBaitBadgeAriaLabels();
   }, NAV_POLL_INTERVAL_MS);
 
   (async () => {
     session = await readSession();
     scheduleLocalTimer();
     render();
-    hideStartNotificationBubble();
+    cleanBaitBadgeAriaLabels();
   })();
 })();
