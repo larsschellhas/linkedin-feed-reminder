@@ -210,13 +210,18 @@
   // Sekunden Bedenkzeit klickbar (Anti-Dark-Pattern: kein reflexhaftes Klicken).
   function applyCooldown(button, seconds) {
     const originalLabel = button.textContent;
-    let remaining = seconds;
+    // Endzeitpunkt statt Tick-Zähler: setInterval-Ticks können sich verzögern
+    // oder aussetzen (z.B. wenn die Seite gerade lädt und der Haupt-Thread
+    // blockiert ist). Wir berechnen die verbleibenden Sekunden bei jedem Tick
+    // neu aus der echten Differenz zur Uhrzeit, damit sich Verzögerungen beim
+    // nächsten Tick von selbst korrigieren, statt sich aufzusummieren.
+    const endTime = Date.now() + seconds * 1000;
     button.disabled = true;
     button.classList.add("lfr-cooldown");
-    button.textContent = `${originalLabel} (${remaining})`;
+    button.textContent = `${originalLabel} (${seconds})`;
 
     const intervalId = setInterval(() => {
-      remaining -= 1;
+      const remaining = Math.ceil((endTime - Date.now()) / 1000);
       if (remaining <= 0) {
         clearInterval(intervalId);
         activeCooldowns.delete(intervalId);
