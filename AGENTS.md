@@ -20,9 +20,9 @@ files in this repo, unmodified, straight to Firefox.
 - [content.css](content.css) — styles for the overlay/prompt/bubble UI
   injected by content.js. Class names are prefixed `lfr-` (LinkedIn Feed
   Reminder) to avoid colliding with LinkedIn's own classes.
-- [background.js](background.js) — minimal background script, currently only
-  closes the tab on request from content.js (content scripts can't close
-  their own tab).
+- [background.js](background.js) — minimal background script: closes the tab
+  on request from content.js (content scripts can't close their own tab) and
+  clears the stored session once no LinkedIn tabs are left.
 - [_locales/\*/messages.json](_locales/en/messages.json) — one file per
   supported language (15 total; `en` is `default_locale`). All user-facing
   strings (including the manifest name/description) go through here.
@@ -56,6 +56,74 @@ files in this repo, unmodified, straight to Firefox.
   selector re-matches every new node automatically, with no polling delay
   and no flash.
 
+## Working against LinkedIn's DOM
+
+Read this before changing a selector — and especially before concluding that
+a selector is wrong. Most of it was learned the expensive way.
+
+### LinkedIn ships several frontends at once
+
+The same logged-in account gets structurally different markup depending on
+the page and rollout state:
+
+- **Redesign** — hashed, build-dependent class names throughout, no stable
+  IDs. The only reliable anchor found so far is `[data-testid="primary-nav"]`.
+  "Start" is a `<button>` here while the other nav items are `<a>`, so don't
+  put a tag filter in nav selectors.
+- **Legacy Voyager** — `#global-nav` plus Artdeco classes
+  (`.artdeco-notification-badge`, `.notification-badge__no-count`). Observed
+  on `/messaging` and `/notifications`.
+- **Mobile ("mwlite")** — a third, unrelated markup, and the only one with
+  genuinely stable IDs: `#secondary-nav` (top bar), `#primary-nav` (bottom
+  tab bar).
+
+Navigating between pages can switch which variant you get **without a page
+reload**. A selector that works right after F5 can stop matching two clicks
+later. Handle every variant, and back each measurement with a fallback
+constant (nav heights: 52px desktop, 48px mobile).
+
+### Content scripts must run in all frames
+
+LinkedIn renders parts of its UI — including the legacy global nav — inside a
+viewport-filling iframe: `<iframe data-testid="interop-iframe"
+src="/preload/?_bprMode=vanilla">`. Content scripts default to the top frame
+only, so anything targeting that nav silently does nothing there. Hence
+`"all_frames": true` in the manifest.
+
+The flip side: **session state, timers and the lock overlay must stay
+top-frame-only** — that's the `isTopFrame` guard in content.js. Without it
+every subframe builds its own lock and reminder overlay and competes for the
+same session. When adding behavior to content.js, decide explicitly which
+side of that line it belongs on.
+
+### Debugging protocol
+
+When something "doesn't work", establish in *this* order whether:
+
+1. the content script is live in the document you're looking at —
+   `document.documentElement.dataset.lfr === "1"` (set by content.js);
+2. the CSS is applied — append a throwaway `<div class="lfr-bubble">` and
+   check `getComputedStyle(...).position === "fixed"`;
+3. the selector matches — `element.matches(...)`.
+
+Jumping straight to (3) is a trap: DevTools switches the console context to
+the iframe the moment you inspect an element inside it, so the same snippet
+returns contradictory results depending on which frame it ran in. An entire
+debugging session went into rewriting selectors that were fine all along,
+while the real cause was step (1).
+
+### Traps found the hard way
+
+- `.artdeco-notification-badge` is **not** the red dot. It's the
+  `position: relative` wrapper shared by the dot *and* the icon — hiding it
+  hides the whole nav icon. Target the inner `<span class="notification-badge">`.
+- CSS `:empty` does not match an element containing whitespace (Firefox
+  implements the Level 3 behavior). Pseudo-elements don't count as children
+  though, so a dot drawn via `::after` still leaves its host `:empty`.
+- Reloading the temporary add-on does **not** re-inject into already-open
+  tabs — they keep running without a content script until the page itself is
+  reloaded. Manifest changes need an add-on reload *and* an F5.
+
 ## Shared state / cross-tab behavior
 
 Session state (chosen duration, next reminder time) lives in
@@ -65,6 +133,15 @@ session instead of starting a fresh one. When touching the session
 lifecycle in content.js, keep this cross-tab sync intact: don't reintroduce
 purely in-memory, per-tab-only state for anything the user perceives as
 "the timer".
+
+Because that state is persistent, it also has to be cleaned up: background.js
+clears it on `tabs.onRemoved` once no LinkedIn tab is left, and again on
+`runtime.onStartup`. Without the startup path a session survives a browser or
+PC restart and the next LinkedIn visit opens straight into the reminder
+overlay instead of the intent prompt. Note that MV3 background scripts are
+**not persistent** — they can be terminated between events, so never rely on
+a `setTimeout` there surviving; register listeners at top level and do the
+work synchronously inside them.
 
 ## i18n
 
@@ -124,6 +201,15 @@ There is no automated test suite. Before submitting a change:
    prompt, duration cooldown, reminder overlay, continue/walk/coffee
    actions, and (if touched) the cross-tab bubble by opening a second feed
    tab.
+4. For anything touching LinkedIn's own DOM, navigate **between** pages
+   (feed → messaging → notifications) without reloading, not just F5 on one
+   page — that's what switches the nav variant and moves it in and out of
+   the interop iframe. A change that looks fine on a freshly loaded feed
+   regularly falls apart two clicks later.
+
+After editing files, reload the add-on in `about:debugging` **and** reload
+the LinkedIn tab; the add-on reload alone leaves open tabs without a content
+script.
 
 ## Branching / commits
 
