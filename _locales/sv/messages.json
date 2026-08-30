@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Aviseringar" },
   "messagingLinkLabel": { "message": "Meddelanden" },
   "profileLinkLabel": { "message": "Min profil" },
-  "bubbleRemainingLabel": { "message": "{time} kvar på LinkedIn" }
+  "bubbleRemainingLabel": { "message": "{time} kvar på LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder behöver ditt godkännande" },
+  "permissionReminderMessage": { "message": "Högerklicka på tilläggsikonen (pusselbit) → det här tillägget → ställ in \"Läs och ändra data på alla webbplatser\" till \"Tillåt alltid\". Annars gäller åtkomsten bara för det här besöket." }
 }

@@ -3,6 +3,47 @@
 // werden – daher die Duplizierung.
 const STORAGE_KEY = "lfrSession";
 
+const LINKEDIN_ORIGIN_PATTERN = "https://*.linkedin.com/*";
+const NOTIFICATION_ID = "lfr-host-permission-reminder";
+
+// Firefox behandelt die im Manifest deklarierte Host-Permission für
+// LinkedIn (content_scripts -> matches) als opt-in: ein Klick auf das
+// Erweiterungssymbol gewährt sie oft nur "für diesen Besuch"; dauerhaft wird
+// sie erst über den Rechtsklick-Kontextmenüpunkt "Immer erlauben". Es gibt
+// keine WebExtension-API, mit der eine Extension diesen dauerhaften Zustand
+// selbst setzen kann (browser.permissions.request() funktioniert nur für
+// als optional_permissions/optional_host_permissions deklarierte
+// Berechtigungen, nicht für über content_scripts.matches fest zugesagte).
+// Wir können den fehlenden Zugriff aber erkennen und aktiv daran erinnern,
+// ihn dauerhaft zu setzen, statt dass es beim nächsten Update erneut
+// überrascht.
+async function remindAboutHostPermissionIfMissing() {
+  try {
+    const hasAccess = await browser.permissions.contains({
+      origins: [LINKEDIN_ORIGIN_PATTERN],
+    });
+    if (hasAccess) return;
+
+    await browser.notifications.create(NOTIFICATION_ID, {
+      type: "basic",
+      iconUrl: browser.runtime.getURL("icons/icon-96.png"),
+      title: browser.i18n.getMessage("permissionReminderTitle"),
+      message: browser.i18n.getMessage("permissionReminderMessage"),
+    });
+  } catch (e) {
+    // permissions/notifications im Zweifel nicht verfügbar -> nichts tun,
+    // der nächste Start/Update versucht es erneut.
+  }
+}
+
+// Öffnet Mozillas eigene Erklärseite zum Erweiterungssymbol, statt eine
+// exakte Klickanleitung zu behaupten, die sich mit jeder Firefox-Version
+// verschieben kann.
+browser.notifications.onClicked.addListener((notificationId) => {
+  if (notificationId !== NOTIFICATION_ID) return;
+  browser.tabs.create({ url: "https://support.mozilla.org/kb/extensions-button" });
+});
+
 // Räumt eine evtl. hinterlegte Session weg, sobald kein LinkedIn-Tab mehr
 // offen ist. Ohne das würde eine Session, die nicht regulär über den
 // "LinkedIn schließen"-Button oder ein Wegnavigieren beendet wurde (z. B.
@@ -42,6 +83,16 @@ browser.runtime.onStartup.addListener(() => {
     // storage im Zweifel nicht verfügbar -> spätestens das nächste
     // Tab-Schließen räumt auf.
   });
+  remindAboutHostPermissionIfMissing();
+});
+
+// Der eigentlich interessante Fall: nach einem Update (reason "update") ist
+// die Host-Permission am ehesten wieder auf "nur für diesen Besuch"
+// zurückgefallen, siehe Kommentar oben. onInstalled deckt zusätzlich die
+// Erstinstallation ab, falls der Nutzer den anfänglichen Berechtigungs-Dialog
+// wegklickt, ohne den dauerhaften Zugriff zu setzen.
+browser.runtime.onInstalled.addListener(() => {
+  remindAboutHostPermissionIfMissing();
 });
 
 browser.runtime.onMessage.addListener((message, sender) => {

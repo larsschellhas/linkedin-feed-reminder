@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Notifikationer" },
   "messagingLinkLabel": { "message": "Beskeder" },
   "profileLinkLabel": { "message": "Min profil" },
-  "bubbleRemainingLabel": { "message": "{time} tilbage på LinkedIn" }
+  "bubbleRemainingLabel": { "message": "{time} tilbage på LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder skal have din godkendelse" },
+  "permissionReminderMessage": { "message": "Højreklik på udvidelsesikonet (puslespilsbrik) → denne udvidelse → sæt \"Læs og rediger data på alle websteder\" til \"Tillad altid\". Ellers gælder adgangen kun for dette besøg." }
 }

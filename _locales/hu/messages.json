@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Értesítések" },
   "messagingLinkLabel": { "message": "Üzenetek" },
   "profileLinkLabel": { "message": "Saját profilom" },
-  "bubbleRemainingLabel": { "message": "Még {time} van hátra a LinkedInen" }
+  "bubbleRemainingLabel": { "message": "Még {time} van hátra a LinkedInen" },
+  "permissionReminderTitle": { "message": "A LinkedIn Feed Reminder engedélyt kér" },
+  "permissionReminderMessage": { "message": "Jobb kattintás a kiegészítők ikonjára (puzzledarab) → ez a kiegészítő → állítsd az „Adatok olvasása és módosítása minden webhelyen” opciót „Mindig engedélyezve” értékre. Enélkül a hozzáférés csak erre a látogatásra érvényes." }
 }

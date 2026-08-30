@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Benachrichtigungen" },
   "messagingLinkLabel": { "message": "Nachrichten" },
   "profileLinkLabel": { "message": "Mein Profil" },
-  "bubbleRemainingLabel": { "message": "Noch {time} auf LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Noch {time} auf LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder braucht deine Zustimmung" },
+  "permissionReminderMessage": { "message": "Rechtsklick auf das Erweiterungssymbol (Puzzleteil) → diese Erweiterung → „Auf allen Websites lesen und ändern“ auf „Immer erlauben“ stellen. Sonst gilt der Zugriff nur für diesen Besuch." }
 }

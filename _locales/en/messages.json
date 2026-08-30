@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Notifications" },
   "messagingLinkLabel": { "message": "Messages" },
   "profileLinkLabel": { "message": "My profile" },
-  "bubbleRemainingLabel": { "message": "{time} left on LinkedIn" }
+  "bubbleRemainingLabel": { "message": "{time} left on LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder needs your OK" },
+  "permissionReminderMessage": { "message": "Right-click the Extensions (puzzle-piece) icon → this extension → set \"Access your data for all websites\" to \"Always Allow\". Otherwise access only lasts for this visit." }
 }

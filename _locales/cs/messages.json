@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Oznámení" },
   "messagingLinkLabel": { "message": "Zprávy" },
   "profileLinkLabel": { "message": "Můj profil" },
-  "bubbleRemainingLabel": { "message": "Zbývá {time} na LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Zbývá {time} na LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder potřebuje tvůj souhlas" },
+  "permissionReminderMessage": { "message": "Klikni pravým tlačítkem na ikonu doplňků (dílek puzzle) → tento doplněk → nastav „Číst a měnit data na všech webech“ na „Vždy povolit“. Jinak přístup platí jen pro tuto návštěvu." }
 }

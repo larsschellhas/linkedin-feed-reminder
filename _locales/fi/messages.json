@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Ilmoitukset" },
   "messagingLinkLabel": { "message": "Viestit" },
   "profileLinkLabel": { "message": "Oma profiilini" },
-  "bubbleRemainingLabel": { "message": "{time} jäljellä LinkedInissä" }
+  "bubbleRemainingLabel": { "message": "{time} jäljellä LinkedInissä" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder tarvitsee luvan" },
+  "permissionReminderMessage": { "message": "Napsauta hiiren oikealla laajennuskuvaketta (palapelinpala) → tämä laajennus → aseta \"Lue ja muokkaa tietoja kaikilla sivustoilla\" tilaan \"Salli aina\". Muuten pääsy kestää vain tämän käynnin ajan." }
 }
