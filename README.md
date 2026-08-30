@@ -30,8 +30,10 @@ sucked into endless feed scrolling.
   browsing.
 - Available in 15 European languages (auto-detected from your browser
   language, with English as fallback).
-- Hides the red notification bubble LinkedIn shows on the "Home" nav item,
-  which is designed to lure you back into the feed even without new content.
+- Hides the red notification dots LinkedIn puts on nav items that carry no
+  actual count (most prominently "Home") — they exist to lure you back into
+  the feed even when there's nothing new. Badges showing a real number
+  (messages, notifications) are left untouched.
 
 ## Installation (temporary, for development/testing)
 
@@ -41,6 +43,12 @@ sucked into endless feed scrolling.
 
 Temporary add-ons are removed when Firefox restarts. For permanent use, see
 below.
+
+After changing any file, hit "Reload" on the add-on in `about:debugging`
+**and** reload the LinkedIn tab. Reloading the add-on alone leaves
+already-open tabs running without a content script until the page itself is
+reloaded — which looks exactly like a broken selector and is easy to chase
+for a long time.
 
 ## Development
 
