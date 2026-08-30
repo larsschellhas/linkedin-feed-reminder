@@ -14,16 +14,41 @@ html.lfr-locked body {
    (siehe cleanBaitBadgeAriaLabels() in content.js für die dazugehörige
    a11y-Korrektur). */
 
-/* Desktop: <div class="artdeco-notification-badge"><span class="notification-badge">
-   enthält entweder <span class="notification-badge__no-count"> (leer) oder
-   <span class="notification-badge__count">1</span> (echte Zahl). */
-nav .artdeco-notification-badge:has(.notification-badge__no-count) {
+/* Desktop-Legacy: <div class="artdeco-notification-badge"> ist NICHT der Punkt
+   selbst, sondern nur der position:relative-Wrapper, den sich Punkt UND Icon
+   teilen (<span class="notification-badge"> fürs Badge, daneben ein
+   eigenständiges <div> fürs Icon-SVG) – den Wrapper zu verstecken blendet
+   also das ganze Icon mit aus. Getroffen wird deshalb gezielt das innere
+   <span class="notification-badge">, das entweder ein
+   <span class="notification-badge__no-count"> (leer) oder ein
+   <span class="notification-badge__count">1</span> (echte Zahl) enthält.
+   Bewusst OHNE "nav "-Vorfahre: der Header wird je nach Seite (beobachtet auf
+   /messaging) unterschiedlich bzw. verzögert gerendert, sodass die Leiste
+   nicht immer in einem <nav> steckt und die Regel dort sonst sporadisch nicht
+   griff. Die Artdeco-Badge-Klassen sind für sich schon eindeutig genug, und
+   ein Badge ohne Zahl ist überall auf LinkedIn derselbe inhaltslose
+   Klick-Köder. */
+.notification-badge:has(.notification-badge__no-count) {
   display: none !important;
 }
 
-/* Mobile: kein eigener "no-count"-Marker, sondern ein leerer <span> direkt
-   nach dem SVG-Icon (bei echten Zählern steht dort die Zahl als Text). */
-nav a svg + span:empty {
+/* Sicherheitsnetz zur :has()-Regel darüber, gesetzt von tagBaitBadges() in
+   content.js. LinkedIns Ember hängt das __no-count-Kind teils erst NACH dem
+   ersten Rendern in einen bereits bestehenden .notification-badge-Knoten; eine
+   Klasse direkt am Element ist unabhängig davon, ob die Style-Engine die
+   :has()-Bedingung danach neu auswertet. */
+.lfr-bait-badge {
+  display: none !important;
+}
+
+/* Sowohl auf Mobile als auch bei "Start" auf Desktop (dort als <button>
+   statt <a>, deshalb kein Tag-Filter hier) gibt's keinen eigenen
+   "no-count"-Marker, sondern einen leeren <span> direkt nach dem SVG-Icon
+   (bei echten Zählern steht dort die Zahl als Text). :empty greift dabei
+   auch, wenn der Punkt selbst per ::after erzeugt wird – Pseudo-Elemente
+   zählen nicht als DOM-Kinder und werden mit dem verstecktem Elternelement
+   ohnehin nicht mehr gerendert. */
+nav svg + span:empty {
   display: none !important;
 }
 
