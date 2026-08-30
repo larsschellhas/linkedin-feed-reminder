@@ -9,6 +9,9 @@
   const DEEP_LINK_GRACE_MS = 1 * 60 * 1000; // Schonfrist für einen einzelnen Notification-Deep-Link, bevor er als normaler Feed gilt
   const BUBBLE_FADE_MS = 10 * 1000; // Bubble blendet in den letzten 10s vor der Erinnerung aus, statt zu alarmieren
   const SAFE_LINK_NAVIGATION_GRACE_MS = 5000; // Zeitfenster nach Safe-Link-Klick, in dem render() nichts neu aufbaut
+  const DESKTOP_NAV_FALLBACK_HEIGHT_PX = 52; // Fallback, falls [data-testid="primary-nav"] (noch) nicht im DOM steht
+  const MOBILE_NAV_FALLBACK_HEIGHT_PX = 48; // Fallback für #secondary-nav (oben) und #primary-nav (unten) auf der mobilen "mwlite"-Ansicht
+  const MOBILE_BREAKPOINT_PX = 768; // deckt sich mit LinkedIns eigenem Mobile-Breakpoint (siehe content.css)
 
   // Ziele, zu denen man ohne Cooldown wechseln kann: keine endlosen Feeds,
   // sondern zweckgebundene Seiten. "/in/me/" ist eine von LinkedIn selbst
@@ -129,11 +132,65 @@
     overlayKind = null;
   }
 
+  // Desktop-Nav: LinkedIns Markup dort besteht komplett aus gehashten,
+  // buildabhängigen Klassennamen ohne stabile ID (kein "#global-nav" mehr) –
+  // einziger verlässlicher Anker ist das data-testid der Primary-Nav. Das
+  // umschließende <header> ist die tatsächlich fixierte Leiste (der direkte
+  // Wrapper dazwischen ist display:contents und trägt keine eigene Höhe
+  // bei), daher wird dessen Höhe gemessen, mit dem testid-Element selbst als
+  // Fallback, falls kein <header>-Vorfahre gefunden wird.
+  function getDesktopNavHeight() {
+    const primaryNav = document.querySelector('[data-testid="primary-nav"]');
+    if (!primaryNav) return 0;
+    const bar = primaryNav.closest("header") || primaryNav;
+    const height = bar.getBoundingClientRect().height;
+    return height > 0 ? Math.round(height) : 0;
+  }
+
+  // Mobile ("mwlite"-Ansicht, komplett anderes Markup als Desktop): hier
+  // trägt LinkedIn tatsächlich sprechende, nicht gehashte IDs – #secondary-nav
+  // für die obere Titel-/Suchleiste, #primary-nav für die untere Tab-Leiste.
+  function getMobileNavInsets() {
+    const topBar = document.getElementById("secondary-nav");
+    const bottomBar = document.getElementById("primary-nav");
+    const topHeight = topBar ? Math.round(topBar.getBoundingClientRect().height) : 0;
+    const bottomHeight = bottomBar ? Math.round(bottomBar.getBoundingClientRect().height) : 0;
+    return {
+      top: topHeight > 0 ? topHeight : MOBILE_NAV_FALLBACK_HEIGHT_PX,
+      bottom: bottomHeight > 0 ? bottomHeight : MOBILE_NAV_FALLBACK_HEIGHT_PX,
+    };
+  }
+
+  // Ermittelt, wie viel Platz am oberen (und auf Mobile: unteren)
+  // Bildschirmrand für LinkedIns eigene Navigation frei bleiben muss, damit
+  // das Overlay sie nicht verdeckt/verblurrt – siehe createOverlay(). Ohne
+  // Treffer (z. B. weil LinkedIn ein Markup mal wieder ändert) greift ein
+  // Fallback-Wert, damit zumindest eine plausible Lücke bleibt statt gar
+  // keiner oder gleich der ganzen Seite.
+  function getNavInsets() {
+    const isMobileLayout = window.innerWidth <= MOBILE_BREAKPOINT_PX;
+    if (isMobileLayout) return getMobileNavInsets();
+
+    const top = getDesktopNavHeight() || DESKTOP_NAV_FALLBACK_HEIGHT_PX;
+    return { top, bottom: 0 };
+  }
+
   function createOverlay(className) {
     const overlay = document.createElement("div");
     overlay.className = `lfr-overlay ${className}`;
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
+
+    // LinkedIns eigene Nav-Leiste (oben, auf Mobile zusätzlich die untere
+    // Tab-Leiste) bleibt bewusst unverdeckt und unverblurrt und damit ganz
+    // normal klickbar – gesperrt wird nur der Feed/Inhalt darunter. Direkter
+    // Zugriff auf Suche, Mitteilungen, Nachrichten, Profil etc. bleibt damit
+    // über LinkedIns eigene Icons möglich, zusätzlich zu den kuratierten
+    // Safe-Links im Dialog selbst (siehe appendSafeLinks()).
+    const { top, bottom } = getNavInsets();
+    overlay.style.top = `${top}px`;
+    if (bottom) overlay.style.bottom = `${bottom}px`;
+
     document.documentElement.appendChild(overlay);
     lockPage();
     return overlay;
