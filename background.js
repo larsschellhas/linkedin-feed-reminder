@@ -30,13 +30,18 @@ browser.tabs.onRemoved.addListener(() => {
 });
 
 // Netz für den Fall, dass onRemoved gar nicht mehr feuert (Browser-Absturz,
-// PC-Neustart/Abmelden ohne sauberes Schließen der Tabs): beim nächsten
-// Start der Extension prüfen, ob noch LinkedIn-Tabs offen sind (z. B. durch
-// Sitzungswiederherstellung) und sonst aufräumen. Kurze Verzögerung, damit
-// eine laufende Tab-Wiederherstellung des Browsers nicht als "keine Tabs
-// offen" fehlinterpretiert wird.
+// PC-Neustart/Abmelden ohne sauberes Schließen der Tabs). Bewusst ohne
+// Tab-Prüfung und ohne Verzögerung: ein Browserstart bedeutet definitionsgemäß,
+// dass zwischenzeitlich alle Tabs weg waren – auch wenn die
+// Sitzungswiederherstellung gleich wieder LinkedIn-Tabs aufmacht, ist eine
+// frische Intent-Abfrage hier das gewünschte Verhalten. Ein setTimeout wäre
+// hier zudem unzuverlässig, da MV3-Hintergrundskripte nicht persistent sind
+// und vor dem Ablauf beendet werden können.
 browser.runtime.onStartup.addListener(() => {
-  setTimeout(clearSessionIfNoLinkedInTabsOpen, 2000);
+  browser.storage.local.remove(STORAGE_KEY).catch(() => {
+    // storage im Zweifel nicht verfügbar -> spätestens das nächste
+    // Tab-Schließen räumt auf.
+  });
 });
 
 browser.runtime.onMessage.addListener((message, sender) => {

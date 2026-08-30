@@ -13,6 +13,19 @@
   const MOBILE_NAV_FALLBACK_HEIGHT_PX = 48; // Fallback für #secondary-nav (oben) und #primary-nav (unten) auf der mobilen "mwlite"-Ansicht
   const MOBILE_BREAKPOINT_PX = 768; // deckt sich mit LinkedIns eigenem Mobile-Breakpoint (siehe content.css)
 
+  // LinkedIn rendert Teile der Oberfläche – darunter die klassische Nav-Leiste
+  // mit #global-nav – in einem eigenen, seitenfüllenden iframe
+  // (<iframe data-testid="interop-iframe" src="/preload/...">), nicht im
+  // Hauptdokument. Deshalb läuft dieses Script per "all_frames" im Manifest in
+  // allen Frames, sonst blieben die Bait-Badges dort unberührt (der Grund,
+  // warum das Ausblenden je nach Seite mal griff und mal nicht).
+  //
+  // Session-Zustand und Overlays gehören dagegen ausschließlich in den
+  // Haupt-Frame: Ein Unterframe würde sonst seine eigene Sperre samt eigenem
+  // Erinnerungs-Overlay aufbauen und mit dem Haupt-Frame um dieselbe Session
+  // konkurrieren.
+  const isTopFrame = window.top === window.self;
+
   // Ziele, zu denen man ohne Cooldown wechseln kann: keine endlosen Feeds,
   // sondern zweckgebundene Seiten. "/in/me/" ist eine von LinkedIn selbst
   // bereitgestellte Weiterleitung auf das eigene Profil. Icons sind rein
@@ -132,15 +145,19 @@
     overlayKind = null;
   }
 
-  // Desktop-Nav: LinkedIns Markup dort besteht komplett aus gehashten,
-  // buildabhängigen Klassennamen ohne stabile ID (kein "#global-nav" mehr) –
-  // einziger verlässlicher Anker ist das data-testid der Primary-Nav. Das
-  // umschließende <header> ist die tatsächlich fixierte Leiste (der direkte
-  // Wrapper dazwischen ist display:contents und trägt keine eigene Höhe
-  // bei), daher wird dessen Höhe gemessen, mit dem testid-Element selbst als
-  // Fallback, falls kein <header>-Vorfahre gefunden wird.
+  // Desktop-Nav: LinkedIn liefert je nach Seite/Rollout-Stand offenbar zwei
+  // strukturell komplett unterschiedliche Nav-Implementierungen aus – die
+  // ältere Voyager-Nav mit stabiler ID ("#global-nav", z. B. auf /messaging
+  // beobachtet) und ein neueres Redesign komplett aus gehashten,
+  // buildabhängigen Klassennamen ohne stabile ID, dort ist einziger
+  // verlässlicher Anker das data-testid der Primary-Nav. Das umschließende
+  // <header> ist in beiden Fällen die tatsächlich fixierte Leiste (im
+  // Redesign ist der direkte Wrapper dazwischen display:contents und trägt
+  // keine eigene Höhe bei; bei "#global-nav" ist das Element selbst schon
+  // der Header), daher wird dessen Höhe gemessen – mit dem gefundenen
+  // Element selbst als Fallback, falls kein <header>-Vorfahre existiert.
   function getDesktopNavHeight() {
-    const primaryNav = document.querySelector('[data-testid="primary-nav"]');
+    const primaryNav = document.querySelector('[data-testid="primary-nav"], #global-nav');
     if (!primaryNav) return 0;
     const bar = primaryNav.closest("header") || primaryNav;
     const height = bar.getBoundingClientRect().height;
@@ -322,7 +339,7 @@
     }
   }
 
-  if (browser.storage && browser.storage.onChanged) {
+  if (isTopFrame && browser.storage && browser.storage.onChanged) {
     browser.storage.onChanged.addListener((changes, area) => {
       if (area !== "local" || !changes[STORAGE_KEY]) return;
       session = changes[STORAGE_KEY].newValue || null;
@@ -662,27 +679,29 @@
   // kosmetisch für Screenreader-Nutzer und nicht zeitkritisch, daher reicht
   // dafür weiterhin das Polling.
   function cleanBaitBadgeAriaLabels() {
-    const affectedLinks = [];
+    const affectedNavItems = [];
 
-    // Desktop: <div class="artdeco-notification-badge"><span class="notification-badge">
+    // Desktop-Legacy: <div class="artdeco-notification-badge"><span class="notification-badge">
     //   <span class="notification-badge__no-count"> (leer) ODER
     //   <span class="notification-badge__count">1</span> (echte Zahl)
-    document.querySelectorAll("nav .artdeco-notification-badge").forEach((badge) => {
+    // Ohne "nav "-Vorfahre, analog zur CSS-Regel in content.css – siehe dort.
+    document.querySelectorAll(".artdeco-notification-badge").forEach((badge) => {
       if (badge.querySelector(".notification-badge__no-count")) {
-        affectedLinks.push(badge.closest("a"));
+        affectedNavItems.push(badge.closest("a, button"));
       }
     });
 
-    // Mobile: kein eigener "no-count"-Marker, sondern ein leerer <span>
-    // direkt nach dem SVG-Icon (bei echten Zählern steht dort die Zahl als
-    // Textinhalt).
-    document.querySelectorAll("nav a svg + span").forEach((span) => {
+    // Sowohl auf Mobile als auch bei "Start" auf Desktop (dort als <button>
+    // statt <a>, deshalb kein Tag-Filter im Selektor – siehe content.css):
+    // kein eigener "no-count"-Marker, sondern ein leerer <span> direkt nach
+    // dem SVG-Icon (bei echten Zählern steht dort die Zahl als Textinhalt).
+    document.querySelectorAll("nav svg + span").forEach((span) => {
       if (span.children.length === 0 && span.textContent.trim() === "") {
-        affectedLinks.push(span.closest("a"));
+        affectedNavItems.push(span.closest("a, button"));
       }
     });
 
-    affectedLinks.forEach((link) => {
+    affectedNavItems.forEach((link) => {
       const label = link && link.getAttribute("aria-label");
       if (!label) return;
       const cleanedLabel = label.replace(/,[^,]*$/, "").trim();
@@ -692,20 +711,58 @@
     });
   }
 
+  // Lebenszeichen fürs Debugging: LinkedIns unzuverlässigster Teil war bisher
+  // nicht der Selektor, sondern ob das Content-Script im aktuellen Dokument
+  // überhaupt läuft. Über document.documentElement.dataset.lfr lässt sich das
+  // in der Konsole in einem Schritt prüfen, statt es aus dem Verhalten der
+  // Overlays zu erraten.
+  document.documentElement.dataset.lfr = "1";
+
+  // Markiert Badges ohne echte Zahl (den reinen Klick-Köder) mit einer eigenen
+  // Klasse, die content.css ausblendet – als Ergänzung zur :has()-Regel dort.
+  // Eine Klasse direkt am Element ist unabhängig davon, ob die Style-Engine
+  // eine :has()-Bedingung nach nachträglichen DOM-Änderungen neu auswertet.
+  function tagBaitBadges() {
+    document.querySelectorAll(".notification-badge").forEach((badge) => {
+      badge.classList.toggle("lfr-bait-badge", !!badge.querySelector(".notification-badge__no-count"));
+    });
+  }
+
+  // Anders als beim ursprünglichen Poll-Ansatz (siehe Kommentar zu
+  // cleanBaitBadgeAriaLabels) blitzt hier nichts auf: Der Observer reagiert
+  // direkt auf das Rerendern, statt bis zum nächsten Sekunden-Tick zu warten.
+  // Die Bündelung per requestAnimationFrame verhindert, dass LinkedIns
+  // Feed-Mutationen jede einzeln eine Abfrage auslösen.
+  let baitBadgeTagScheduled = false;
+  new MutationObserver(() => {
+    if (baitBadgeTagScheduled) return;
+    baitBadgeTagScheduled = true;
+    requestAnimationFrame(() => {
+      baitBadgeTagScheduled = false;
+      tagBaitBadges();
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
   // LinkedIn ist eine SPA: Seitenwechsel innerhalb der App lösen keine neue
   // Navigation (und damit kein Neuladen des Content-Scripts) aus. render()
   // ist idempotent (legt kein Overlay doppelt an), daher reicht es, sie im
   // selben Takt wie den Notification-Bubble-Ausblender einfach neu
   // aufzurufen, statt Pfadwechsel separat zu verfolgen.
   setInterval(() => {
-    render();
+    if (isTopFrame) render();
     cleanBaitBadgeAriaLabels();
+    tagBaitBadges();
   }, NAV_POLL_INTERVAL_MS);
 
   (async () => {
+    // Läuft in jedem Frame – die Nav (und damit die Bait-Badges) kann in einem
+    // Unterframe stecken, siehe isTopFrame oben.
+    cleanBaitBadgeAriaLabels();
+    tagBaitBadges();
+    if (!isTopFrame) return;
+
     session = await readSession();
     scheduleLocalTimer();
     render();
-    cleanBaitBadgeAriaLabels();
   })();
 })();
