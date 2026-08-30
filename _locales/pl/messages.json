@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Powiadomienia" },
   "messagingLinkLabel": { "message": "Wiadomości" },
   "profileLinkLabel": { "message": "Mój profil" },
-  "bubbleRemainingLabel": { "message": "Zostało {time} na LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Zostało {time} na LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder potrzebuje Twojej zgody" },
+  "permissionReminderMessage": { "message": "Kliknij prawym na ikonę rozszerzeń (puzzel) → to rozszerzenie → ustaw „Odczyt i modyfikacja danych na wszystkich stronach” na „Zawsze zezwalaj”. W przeciwnym razie dostęp obowiązuje tylko dla tej wizyty." }
 }

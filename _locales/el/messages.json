@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Ειδοποιήσεις" },
   "messagingLinkLabel": { "message": "Μηνύματα" },
   "profileLinkLabel": { "message": "Το προφίλ μου" },
-  "bubbleRemainingLabel": { "message": "Απομένουν {time} στο LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Απομένουν {time} στο LinkedIn" },
+  "permissionReminderTitle": { "message": "Το LinkedIn Feed Reminder χρειάζεται την έγκρισή σου" },
+  "permissionReminderMessage": { "message": "Δεξί κλικ στο εικονίδιο επεκτάσεων (κομμάτι παζλ) → αυτή η επέκταση → όρισε «Ανάγνωση και τροποποίηση δεδομένων σε όλους τους ιστοτόπους» σε «Να επιτρέπεται πάντα». Αλλιώς η πρόσβαση ισχύει μόνο για αυτήν την επίσκεψη." }
 }

@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Notifications" },
   "messagingLinkLabel": { "message": "Messagerie" },
   "profileLinkLabel": { "message": "Mon profil" },
-  "bubbleRemainingLabel": { "message": "Encore {time} sur LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Encore {time} sur LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder a besoin de ton accord" },
+  "permissionReminderMessage": { "message": "Clic droit sur l'icône des extensions (pièce de puzzle) → cette extension → mets « Lire et modifier les données de tous les sites » sur « Toujours autoriser ». Sinon l'accès n'est valable que pour cette visite." }
 }

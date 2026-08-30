@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Notificări" },
   "messagingLinkLabel": { "message": "Mesaje" },
   "profileLinkLabel": { "message": "Profilul meu" },
-  "bubbleRemainingLabel": { "message": "Au mai rămas {time} pe LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Au mai rămas {time} pe LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder are nevoie de aprobarea ta" },
+  "permissionReminderMessage": { "message": "Clic dreapta pe iconița extensiilor (piesă de puzzle) → această extensie → setează „Citește și modifică datele pe toate site-urile” pe „Permite întotdeauna”. Altfel accesul e valabil doar pentru această vizită." }
 }

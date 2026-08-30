@@ -16,5 +16,7 @@
   "notificationsLinkLabel": { "message": "Meldingen" },
   "messagingLinkLabel": { "message": "Berichten" },
   "profileLinkLabel": { "message": "Mijn profiel" },
-  "bubbleRemainingLabel": { "message": "Nog {time} op LinkedIn" }
+  "bubbleRemainingLabel": { "message": "Nog {time} op LinkedIn" },
+  "permissionReminderTitle": { "message": "LinkedIn Feed Reminder heeft je toestemming nodig" },
+  "permissionReminderMessage": { "message": "Rechtsklik op het extensiepictogram (puzzelstukje) → deze extensie → zet \"Gegevens op alle websites lezen en wijzigen\" op \"Altijd toestaan\". Anders geldt de toegang alleen voor dit bezoek." }
 }
