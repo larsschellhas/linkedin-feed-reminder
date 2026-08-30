@@ -37,7 +37,13 @@ nav a svg + span:empty {
 
 .lfr-overlay {
   position: fixed;
-  inset: 0;
+  /* top/bottom werden von createOverlay() in content.js inline überschrieben,
+     damit LinkedIns eigene Nav-Leiste (oben, auf Mobile zusätzlich unten)
+     frei bleibt – siehe getNavInsets(). left/right bleiben immer 0. */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 2147483647;
   display: flex;
   align-items: center;
